@@ -204,6 +204,7 @@ public class SSOAgentConfig {
         }
         String isSAML2SSOLoginEnabledString = properties.getProperty(
                 SSOAgentConstants.SSOAgentConfig.ENABLE_SAML2_SSO_LOGIN);
+
         if (isSAML2SSOLoginEnabledString != null) {
             isSAML2SSOLoginEnabled = Boolean.parseBoolean(isSAML2SSOLoginEnabledString);
         } else {
