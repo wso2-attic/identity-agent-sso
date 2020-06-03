@@ -20,6 +20,7 @@
 
 package org.wso2.carbon.identity.sso.agent.util;
 
+import org.apache.xerces.impl.Constants;
 import org.apache.xml.security.c14n.Canonicalizer;
 import org.apache.xml.security.signature.XMLSignature;
 import org.opensaml.Configuration;
@@ -48,6 +49,8 @@ import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.XMLConstants;
+import org.apache.xerces.util.SecurityManager;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -70,6 +73,7 @@ public class SSOAgentUtils {
     private static boolean isBootStrapped = false;
 
     private static Random random = new Random();
+    private static final int ENTITY_EXPANSION_LIMIT = 0;
 
     private SSOAgentUtils() {
     }
@@ -276,6 +280,29 @@ public class SSOAgentUtils {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setExpandEntityReferences(false);
         documentBuilderFactory.setNamespaceAware(true);
+        documentBuilderFactory.setXIncludeAware(false);
+        try {
+            documentBuilderFactory.setFeature(Constants.SAX_FEATURE_PREFIX
+                    + Constants.EXTERNAL_GENERAL_ENTITIES_FEATURE, false);
+            documentBuilderFactory.setFeature(Constants.SAX_FEATURE_PREFIX
+                    + Constants.EXTERNAL_PARAMETER_ENTITIES_FEATURE, false);
+            documentBuilderFactory.setFeature(Constants.XERCES_FEATURE_PREFIX
+                            + Constants.LOAD_EXTERNAL_DTD_FEATURE,
+                    false);
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        } catch (ParserConfigurationException e) {
+            LOGGER.log(Level.SEVERE,
+                    "Failed to load XML Processor Feature " + Constants.EXTERNAL_GENERAL_ENTITIES_FEATURE
+                            + " or " + Constants.EXTERNAL_PARAMETER_ENTITIES_FEATURE + " or "
+                            + Constants.LOAD_EXTERNAL_DTD_FEATURE + " or secure-processing.");
+        }
+
+        org.apache.xerces.util.SecurityManager securityManager = new SecurityManager();
+        securityManager.setEntityExpansionLimit(ENTITY_EXPANSION_LIMIT);
+        documentBuilderFactory.setAttribute(Constants.XERCES_PROPERTY_PREFIX
+                        + Constants.SECURITY_MANAGER_PROPERTY, securityManager);
+
         try {
             DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
             docBuilder.setEntityResolver(new CarbonEntityResolver());
