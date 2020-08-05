@@ -44,6 +44,7 @@ public class SSOAgentContextEventListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+
         Properties properties = new Properties();
         try {
 

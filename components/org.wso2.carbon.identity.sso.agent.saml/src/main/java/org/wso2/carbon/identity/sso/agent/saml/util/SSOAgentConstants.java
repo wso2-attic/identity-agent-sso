@@ -44,6 +44,7 @@ public class SSOAgentConstants {
         public static final String HTTP_POST_PARAM_SAML2_RESP = "SAMLResponse";
         public static final String SAML2_ARTIFACT_RESP = "SAMLart";
         public static final String SUCCESS_CODE = "urn:oasis:names:tc:SAML:2.0:status:Success";
+
         private SAML2SSO() {
 
         }

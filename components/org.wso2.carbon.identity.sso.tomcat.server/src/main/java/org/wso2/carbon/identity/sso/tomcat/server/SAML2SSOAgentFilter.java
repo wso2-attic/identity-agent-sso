@@ -54,6 +54,7 @@ public class SAML2SSOAgentFilter implements Filter {
      */
     @Override
     public void init(FilterConfig fConfig) throws ServletException {
+
         this.filterConfig = fConfig;
     }
 
@@ -158,12 +159,12 @@ public class SAML2SSOAgentFilter implements Filter {
         }
     }
 
-
     /**
      * @see Filter#destroy()
      */
     @Override
     public void destroy() {
+
         return;
     }
 
