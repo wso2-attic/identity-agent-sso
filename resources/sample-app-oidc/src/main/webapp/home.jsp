@@ -28,6 +28,7 @@
 <%@ page import="java.util.Set" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="java.util.HashSet" %>
+<%@ page import="org.wso2.carbon.identity.sso.agent.oidc.bean.SessionBean" %>
 
 <%
     final HttpSession currentSession = request.getSession(false);
@@ -37,14 +38,12 @@
     
     String name = null;
     Map<String, Object> customClaimValueMap = new HashMap<>();
-    Set<String> userAttributeClaims = new HashSet<>(Arrays.asList("country", "gender", "email", "birthdate"));;
     
     if (idToken != null) {
         try {
             ReadOnlyJWTClaimsSet claimsSet = SignedJWT.parse(idToken).getJWTClaimsSet();
             name = claimsSet.getSubject();
-            customClaimValueMap = claimsSet.getCustomClaims();
-            
+            customClaimValueMap = SessionBean.getInstance().getUserAttributes(idToken);
         } catch (Exception e) {
             e.printStackTrace();
         }
