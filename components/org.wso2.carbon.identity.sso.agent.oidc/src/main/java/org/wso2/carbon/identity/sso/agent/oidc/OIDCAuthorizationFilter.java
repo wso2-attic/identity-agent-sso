@@ -101,7 +101,7 @@ public class OIDCAuthorizationFilter implements Filter {
                 return;
             } catch (OAuthSystemException e) {
                 String indexPage = getIndexPage(properties);
-                if (!StringUtils.isBlank(indexPage)) {
+                if (StringUtils.isNotBlank(indexPage)) {
                     response.sendRedirect(indexPage);
                 } else {
                     throw new SSOAgentClientException("indexPage property is not configured.");
@@ -127,13 +127,13 @@ public class OIDCAuthorizationFilter implements Filter {
 
         Set<String> skipURIs = new HashSet<String>();
         String skipURIsString = properties.getProperty(SSOAgentConstants.SKIP_URIS);
-        if (!StringUtils.isBlank(skipURIsString)) {
+        if (StringUtils.isNotBlank(skipURIsString)) {
             String[] skipURIArray = skipURIsString.split(",");
             for (String skipURI : skipURIArray) {
                 skipURIs.add(skipURI);
             }
         }
-        if (!StringUtils.isBlank(properties.getProperty(SSOAgentConstants.INDEX_PAGE))) {
+        if (StringUtils.isNotBlank(properties.getProperty(SSOAgentConstants.INDEX_PAGE))) {
             skipURIs.add(properties.getProperty(SSOAgentConstants.INDEX_PAGE));
         }
         return skipURIs;
@@ -142,7 +142,7 @@ public class OIDCAuthorizationFilter implements Filter {
     private String getIndexPage(Properties properties) {
 
         String indexPage = null;
-        if (!StringUtils.isBlank(properties.getProperty(SSOAgentConstants.INDEX_PAGE))) {
+        if (StringUtils.isNotBlank(properties.getProperty(SSOAgentConstants.INDEX_PAGE))) {
             indexPage = properties.getProperty(SSOAgentConstants.INDEX_PAGE);
         }
         return indexPage;

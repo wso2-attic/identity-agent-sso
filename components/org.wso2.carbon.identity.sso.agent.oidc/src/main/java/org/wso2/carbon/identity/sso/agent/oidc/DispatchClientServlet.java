@@ -42,30 +42,28 @@ public class DispatchClientServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        responseHandler(req, resp);
+        handleOIDCCallback(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        responseHandler(req, resp);
+        handleOIDCCallback(req, resp);
     }
 
-    private void responseHandler(final HttpServletRequest request, final HttpServletResponse response)
+    private void handleOIDCCallback(final HttpServletRequest request, final HttpServletResponse response)
             throws IOException, SSOAgentClientException {
-
-        Properties properties = SSOAgentContextEventListener.getProperties();
-        String indexPage = getIndexPage(properties);
         // Create the initial session
         if (request.getSession(false) == null) {
             request.getSession(true);
         }
+        Properties properties = SSOAgentContextEventListener.getProperties();
+        String indexPage = getIndexPage(properties);
 
         // Validate callback properties
-        if (request.getParameterMap().isEmpty() || (request.getParameterMap().containsKey("sp") &&
-                request.getParameterMap().containsKey("tenantDomain"))) {
+        if (isLogout(request)) {
             CommonUtils.logout(request, response);
-            if (!StringUtils.isBlank(indexPage)) {
+            if (StringUtils.isNotBlank(indexPage)) {
                 response.sendRedirect(indexPage);
             } else {
                 throw new SSOAgentClientException("indexPage property is not configured.");
@@ -78,7 +76,7 @@ public class DispatchClientServlet extends HttpServlet {
         if (StringUtils.isNotBlank(error)) {
             // Error response from IDP
             CommonUtils.logout(request, response);
-            if (!StringUtils.isBlank(indexPage)) {
+            if (StringUtils.isNotBlank(indexPage)) {
                 response.sendRedirect(indexPage);
             } else {
                 throw new SSOAgentClientException("indexPage property is not configured.");
@@ -95,7 +93,7 @@ public class DispatchClientServlet extends HttpServlet {
             CommonUtils.getToken(request, response);
             response.sendRedirect("home.jsp");
         } catch (SSOAgentServerException | OAuthSystemException | OAuthProblemException e) {
-            if (!StringUtils.isBlank(indexPage)) {
+            if (StringUtils.isNotBlank(indexPage)) {
                 response.sendRedirect(indexPage);
             } else {
                 throw new SSOAgentClientException("indexPage property is not configured.");
@@ -106,9 +104,21 @@ public class DispatchClientServlet extends HttpServlet {
     private String getIndexPage(Properties properties) {
 
         String indexPage = null;
-        if (!StringUtils.isBlank(properties.getProperty(SSOAgentConstants.INDEX_PAGE))) {
+        if (StringUtils.isNotBlank(properties.getProperty(SSOAgentConstants.INDEX_PAGE))) {
             indexPage = properties.getProperty(SSOAgentConstants.INDEX_PAGE);
         }
         return indexPage;
+    }
+
+    private boolean isLogout(HttpServletRequest request) {
+
+        if (request.getParameterMap().isEmpty()) {
+            return true;
+        }
+        if (request.getParameterMap().containsKey("sp") &&
+                request.getParameterMap().containsKey("tenantDomain")) {
+            return true;
+        }
+        return false;
     }
 }

@@ -96,10 +96,13 @@ public class CommonUtils {
     public static void getToken(final HttpServletRequest request, final HttpServletResponse response)
             throws OAuthProblemException, OAuthSystemException, SSOAgentServerException {
 
+        HttpSession session = request.getSession(false);
+        if (!checkOAuth(request)) {
+            session.invalidate();
+            session = request.getSession(true);
+        }
         final Optional<Cookie> appIdCookie = getAppIdCookie(request);
-        final HttpSession session = request.getSession(false);
         final Properties properties = SSOAgentContextEventListener.getProperties();
-
         final TokenData storedTokenData;
 
         if (appIdCookie.isPresent()) {
@@ -198,4 +201,12 @@ public class CommonUtils {
         }
     }
 
+    private static boolean checkOAuth(final HttpServletRequest request) {
+
+        final HttpSession currentSession = request.getSession(false);
+
+        return currentSession != null
+                && currentSession.getAttribute("authenticated") != null
+                && (boolean) currentSession.getAttribute("authenticated");
+    }
 }
