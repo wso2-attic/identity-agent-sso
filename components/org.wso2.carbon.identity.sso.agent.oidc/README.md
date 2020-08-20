@@ -80,8 +80,8 @@ Hence, the sso agent regards the index.html page as the landing page and would b
 When a logout sequence is initiated, the sso agent would redirect the user to this exact page which is configured via
  the `indexPage` property.
 
-In the **index.html** page of the oidc-sample-app, the login button would send a request to the **home.jsp** page
-. This request would first engage the **OIDCAuthorizationFilter** which is specified in the **web.xml** file in the
+In the **index.html** page of the oidc-sample-app, the login button would send a request to the **home.jsp** page.
+  This request would first engage the **OIDCAuthorizationFilter** which is specified in the **web.xml** file in the
  `identity-agent-sso/resources/sample-app-oidc/src/main/webapp/WEB-INF` directory. There, it would check if there is
   an authenticated session in place. If the session is authenticated, the request would be handled by the
    **DispatchClientServlet** and would forward the user to the **home.jsp** page.
@@ -91,15 +91,11 @@ In the **index.html** page of the oidc-sample-app, the login button would send a
     **DispatchClientServlet** and the user would be redirected to the **home.jsp** page.
 
 
-This would engage the SAML2SSOAgentFilter which is specified in the **web.xml** file in the `identity-agent-sso
-/resources/SampleApp/src/main/webapp/WEB-INF` directory, and redirect the user to the IdP authentication page.
-
-
 In the **home.jsp** file, we have added the following to trigger a logout flow:
 
 ``<a href='<%=properties.getProperty(SSOAgentConstants.OIDC_LOGOUT_ENDPOINT)%>?post_logout_redirect_uri=<%=properties.getProperty("post_logout_redirect_uri")%>&id_token_hint=<%=idToken%>&session_state=<%=sessionState%>'>Logout</a>``
 
-Clicking on the logout link would trigger the logout flow. After successful logout, the user would be
+After successful logout, the user would be
  redirected to the page configured via the `indexPage` property previously discussed.
 
 
@@ -111,7 +107,8 @@ These instructions will guide you on integrating OIDC into your Java application
 This allows the developers to turn a Java application into a SP (Service Provider) that can be connected to an IdP
  (Identity Provider) which can then be secured with OIDC.
 
-A sample application boilerplate is included in https://github.com/wso2-extensions/identity-agent-sso/tree/master/resources/SampleApp-boilerplate which we would use for the following section. 
+A sample application boilerplate is included in https://github.com/wso2
+-extensions/identity-agent-sso/tree/master/resources/SampleApp-boilerplate which we would use for the following section. 
 
 The structure of the web app boilerplate would be as follows:
 
@@ -119,7 +116,7 @@ The structure of the web app boilerplate would be as follows:
 
 ### Configuring the web app
 
-Starting with the pom.xml, the following dependencies should be added for the webApp to be using the OIDC SDK.
+Starting with the pom.xml, the following dependencies should be added for the webApp for it to be using the OIDC SDK.
 
 Install it as a maven dependency:
 ```
@@ -167,7 +164,6 @@ In the oidc-sample-app, create a file named oidc-sample-app.properties in the re
 ```
 consumerKey=KE4OYeY_gfYwzQbJa9tGhj1hZJMa
 consumerSecret=_ebDU3prFV99JYgtbnknB0z0dXoa
-skipURIs=
 indexPage=/oidc-sample-app/index.html
 callBackUrl=http://localhost:8080/oidc-sample-app/oauth2client
 scope=openid internal_application_mgt_view
@@ -287,7 +283,7 @@ The web app needs to be configured to read the attributes sent from the Identity
 .
 .
 </head>
-<%
+%
     final HttpSession currentSession = request.getSession(false);
     final Properties properties = SSOAgentContextEventListener.getProperties();
     final String sessionState = (String) currentSession.getAttribute(SSOAgentConstants.SESSION_STATE);
@@ -300,8 +296,7 @@ The web app needs to be configured to read the attributes sent from the Identity
         try {
             ReadOnlyJWTClaimsSet claimsSet = SignedJWT.parse(idToken).getJWTClaimsSet();
             name = claimsSet.getSubject();
-            customClaimValueMap = claimsSet.getCustomClaims();
-            
+            customClaimValueMap = SessionBean.getInstance().getUserAttributes(idToken);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -311,12 +306,12 @@ The web app needs to be configured to read the attributes sent from the Identity
 .
 .
 ```
-Then, we would use the `saml2SSOAttributes` in the **home.jsp** to display the user attributes via a table:
+Then, we would use the `customClaimValueMap` in the **home.jsp** to display the user attributes via a table:
 
 ```
 <% if (!customClaimValueMap.isEmpty()) { %>
-        <div>
-            <div>
+        <div class="element-padding">
+            <div class="element-padding">
                 <h3 align="center">User Details</h3>
             </div>
             <table class="center">
