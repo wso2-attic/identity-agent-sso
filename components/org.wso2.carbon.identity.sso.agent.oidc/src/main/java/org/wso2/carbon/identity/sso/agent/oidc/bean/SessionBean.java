@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.identity.sso.agent.oidc.bean;
 
-import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
+import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.wso2.carbon.identity.sso.agent.oidc.exception.SSOAgentServerException;
 
@@ -35,7 +35,8 @@ import java.util.Set;
 public class SessionBean {
 
     private static Set<String>
-            oidcMetadataClaims = new HashSet<>(Arrays.asList("at_hash", "c_hash", "azp", "amr", "sid"));
+            oidcMetadataClaims = new HashSet<>(Arrays.asList("at_hash", "sub", "iss", "aud", "nbf", "c_hash", "azp",
+            "amr", "sid", "exp", "iat"));
 
 
     public static SessionBean getInstance() {
@@ -51,8 +52,8 @@ public class SessionBean {
 
         Map<String, Object> userClaimValueMap = new HashMap<>();
         try {
-            ReadOnlyJWTClaimsSet claimsSet = SignedJWT.parse(idToken).getJWTClaimsSet();
-            Map<String, Object> customClaimValueMap = claimsSet.getCustomClaims();
+            JWTClaimsSet claimsSet = SignedJWT.parse(idToken).getJWTClaimsSet();
+            Map<String, Object> customClaimValueMap = claimsSet.getClaims();
 
             for (String claim : customClaimValueMap.keySet()) {
                 if (!oidcMetadataClaims.contains(claim)) {

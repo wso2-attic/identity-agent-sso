@@ -32,20 +32,25 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon.identity.agent.sso.java</groupId>
-            <artifactId>org.wso2.carbon.identity.sso.agent</artifactId>
-            <version>${sso.agent.version}</version>
+            <groupId>commons-lang.wso2</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <version>${nimbusds.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.orbit.org.apache.oltu.oauth2</groupId>
+            <artifactId>oltu</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.client</artifactId>
         </dependency>
     </dependencies>
-
-    <properties>
-        <sso.agent.version>5.5.5</sso.agent.version>
-        <nimbusds.version>2.26.1</nimbusds.version>
-    </properties>
 
 </project>

@@ -218,6 +218,16 @@
                 <artifactId>pax-logging-api</artifactId>
                 <version>${pax.logging.api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>nimbus-jose-jwt</artifactId>
+                <version>${nimbusds.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang.wso2</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.wso2.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -328,6 +338,7 @@
         <httpcomponents-httpclient.wso2.version>4.3.1.wso2v2</httpcomponents-httpclient.wso2.version>
         <httpcomponents-apache.wso2.version>4.3.1.wso2v1</httpcomponents-apache.wso2.version>
         <commons-codec.version>1.9</commons-codec.version>
+        <commons-lang.wso2.version>2.6.0.wso2v1</commons-lang.wso2.version>
 
         <saml.common.util.version>1.0.3</saml.common.util.version>
         <saml.common.util.version.range>[1.0.0,2.0.0)</saml.common.util.version.range>
@@ -349,6 +360,7 @@
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
+        <nimbusds.version>8.20</nimbusds.version>
     </properties>
 
     <modules>
