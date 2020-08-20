@@ -18,14 +18,14 @@
   ~ under the License.
   --%>
 
-<%@page import="com.nimbusds.jwt.ReadOnlyJWTClaimsSet" %>
+<%@page import="com.nimbusds.jwt.JWTClaimsSet" %>
 <%@page import="com.nimbusds.jwt.SignedJWT" %>
 <%@page import="org.wso2.carbon.identity.sso.agent.oidc.SSOAgentContextEventListener" %>
-<%@page import="org.wso2.carbon.identity.sso.agent.oidc.bean.SessionBean" %>
 <%@page import="org.wso2.carbon.identity.sso.agent.oidc.util.SSOAgentConstants" %>
 <%@page import="java.util.HashMap" %>
-<%@ page import="java.util.Map" %>
+<%@page import="java.util.Map" %>
 <%@ page import="java.util.Properties" %>
+<%@ page import="org.wso2.carbon.identity.sso.agent.oidc.bean.SessionBean" %>
 
 <%
     final HttpSession currentSession = request.getSession(false);
@@ -38,7 +38,7 @@
     
     if (idToken != null) {
         try {
-            ReadOnlyJWTClaimsSet claimsSet = SignedJWT.parse(idToken).getJWTClaimsSet();
+            JWTClaimsSet claimsSet = SignedJWT.parse(idToken).getJWTClaimsSet();
             name = claimsSet.getSubject();
             customClaimValueMap = SessionBean.getInstance().getUserAttributes(idToken);
         } catch (Exception e) {
