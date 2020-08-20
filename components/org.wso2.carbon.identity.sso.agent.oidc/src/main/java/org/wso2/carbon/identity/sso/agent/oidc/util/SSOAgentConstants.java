@@ -18,6 +18,10 @@
 
 package org.wso2.carbon.identity.sso.agent.oidc.util;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class holds the constants used in the module, sso-agent-oidc.
  */
@@ -53,4 +57,7 @@ public class SSOAgentConstants {
     //response types
     public static final String CODE = "code";
     public static final String TOKEN = "token";
+
+    public static final Set<String> OIDC_METADATA_CLAIMS = new HashSet<>(
+            Arrays.asList("at_hash", "sub", "iss", "aud", "nbf", "c_hash", "azp", "amr", "sid", "exp", "iat"));
 }

@@ -18,13 +18,19 @@
 
 package org.wso2.carbon.identity.sso.agent.oidc;
 
+import com.nimbusds.common.contenttype.ContentType;
+import com.nimbusds.oauth2.sdk.AuthorizationRequest;
+import com.nimbusds.oauth2.sdk.ResponseType;
+import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.id.ClientID;
 import org.apache.commons.lang.StringUtils;
-import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.wso2.carbon.identity.sso.agent.oidc.exception.SSOAgentClientException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.sso.agent.oidc.util.SSOAgentConstants;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -44,6 +50,8 @@ import javax.servlet.http.HttpSession;
  */
 public class OIDCAuthorizationFilter implements Filter {
 
+    private static final Log log = LogFactory.getLog(OIDCAuthorizationFilter.class);
+
     protected FilterConfig filterConfig = null;
 
     @Override
@@ -58,8 +66,7 @@ public class OIDCAuthorizationFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        HttpSession session = request.getSession();
-
+        HttpSession session = request.getSession(false);
         Properties properties = SSOAgentContextEventListener.getProperties();
 
         if (isURLtoSkip(request, properties)) {
@@ -68,45 +75,8 @@ public class OIDCAuthorizationFilter implements Filter {
         }
 
         if (session == null || session.getAttribute("authenticated") == null) {
-
-            String consumerKey = properties.getProperty(SSOAgentConstants.CONSUMER_KEY);
-            String authzEndpoint = properties.getProperty(SSOAgentConstants.OAUTH2_AUTHZ_ENDPOINT);
-            String authzGrantType = properties.getProperty(SSOAgentConstants.OAUTH2_GRANT_TYPE);
-            String scope = properties.getProperty(SSOAgentConstants.SCOPE);
-            String callBackUrl = properties.getProperty(SSOAgentConstants.CALL_BACK_URL);
-            String logoutEndpoint = properties.getProperty(SSOAgentConstants.OIDC_LOGOUT_ENDPOINT);
-            String sessionIFrameEndpoint = properties.getProperty(SSOAgentConstants.OIDC_SESSION_IFRAME_ENDPOINT);
-
-            session.setAttribute(SSOAgentConstants.OAUTH2_GRANT_TYPE, authzGrantType);
-            session.setAttribute(SSOAgentConstants.CONSUMER_KEY, consumerKey);
-            session.setAttribute(SSOAgentConstants.SCOPE, scope);
-            session.setAttribute(SSOAgentConstants.CALL_BACK_URL, callBackUrl);
-            session.setAttribute(SSOAgentConstants.OAUTH2_AUTHZ_ENDPOINT, authzEndpoint);
-            session.setAttribute(SSOAgentConstants.OIDC_LOGOUT_ENDPOINT, logoutEndpoint);
-            session.setAttribute(SSOAgentConstants.OIDC_SESSION_IFRAME_ENDPOINT, sessionIFrameEndpoint);
-
-            OAuthClientRequest.AuthenticationRequestBuilder oAuthAuthenticationRequestBuilder =
-                    new OAuthClientRequest.AuthenticationRequestBuilder(authzEndpoint);
-            oAuthAuthenticationRequestBuilder
-                    .setClientId(consumerKey)
-                    .setRedirectURI((String) session.getAttribute(SSOAgentConstants.CALL_BACK_URL))
-                    .setResponseType(authzGrantType)
-                    .setScope(scope);
-
-            // Build the new response mode with form post.
-            OAuthClientRequest authzRequest;
-            try {
-                authzRequest = oAuthAuthenticationRequestBuilder.buildQueryMessage();
-                response.sendRedirect(authzRequest.getLocationUri());
-                return;
-            } catch (OAuthSystemException e) {
-                String indexPage = getIndexPage(properties);
-                if (StringUtils.isNotBlank(indexPage)) {
-                    response.sendRedirect(indexPage);
-                } else {
-                    throw new SSOAgentClientException("indexPage property is not configured.");
-                }
-            }
+            session = request.getSession();
+            sendAuthzRequest(response, session, properties);
         } else {
             filterChain.doFilter(request, response);
         }
@@ -115,6 +85,55 @@ public class OIDCAuthorizationFilter implements Filter {
     @Override
     public void destroy() {
 
+    }
+
+    private void sendAuthzRequest(HttpServletResponse response, HttpSession session, Properties properties)
+            throws IOException {
+
+        String consumerKey = properties.getProperty(SSOAgentConstants.CONSUMER_KEY);
+        String authzEndpoint = properties.getProperty(SSOAgentConstants.OAUTH2_AUTHZ_ENDPOINT);
+        String authzGrantType = properties.getProperty(SSOAgentConstants.OAUTH2_GRANT_TYPE);
+        String scope = properties.getProperty(SSOAgentConstants.SCOPE);
+        String callBackUrl = properties.getProperty(SSOAgentConstants.CALL_BACK_URL);
+        String logoutEndpoint = properties.getProperty(SSOAgentConstants.OIDC_LOGOUT_ENDPOINT);
+        String sessionIFrameEndpoint = properties.getProperty(SSOAgentConstants.OIDC_SESSION_IFRAME_ENDPOINT);
+
+        ResponseType responseType = new ResponseType(ResponseType.Value.CODE);
+        ClientID clientID = new ClientID(consumerKey);
+        Scope authScope = new Scope(scope);
+        URI callBackURI = validateURI(session, response, properties, callBackUrl);
+        URI authorizationEndpoint = validateURI(session, response, properties, authzEndpoint);
+        ContentType contentType = ContentType.APPLICATION_JSON;
+
+        session.setAttribute(SSOAgentConstants.OAUTH2_GRANT_TYPE, authzGrantType);
+        session.setAttribute(SSOAgentConstants.CONSUMER_KEY, consumerKey);
+        session.setAttribute(SSOAgentConstants.SCOPE, scope);
+        session.setAttribute(SSOAgentConstants.CALL_BACK_URL, callBackUrl);
+        session.setAttribute(SSOAgentConstants.OAUTH2_AUTHZ_ENDPOINT, authzEndpoint);
+        session.setAttribute(SSOAgentConstants.OIDC_LOGOUT_ENDPOINT, logoutEndpoint);
+        session.setAttribute(SSOAgentConstants.OIDC_SESSION_IFRAME_ENDPOINT, sessionIFrameEndpoint);
+
+        AuthorizationRequest authzRequest = new AuthorizationRequest.Builder(responseType, clientID)
+                .scope(authScope)
+                .redirectionURI(callBackURI)
+                .endpointURI(authorizationEndpoint)
+                .build();
+        response.setContentType(contentType.getType());
+        response.sendRedirect(authzRequest.toURI().toString());
+    }
+
+    private URI validateURI(HttpSession session, HttpServletResponse response, Properties properties, String url)
+            throws IOException {
+
+        URI uri = null;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            log.error(String.format("Error in parsing the URI for %s.", url), e);
+            String indexPage = getIndexPage(session, properties);
+            response.sendRedirect(indexPage);
+        }
+        return uri;
     }
 
     private boolean isURLtoSkip(HttpServletRequest request, Properties properties) {
@@ -139,12 +158,14 @@ public class OIDCAuthorizationFilter implements Filter {
         return skipURIs;
     }
 
-    private String getIndexPage(Properties properties) {
+    private String getIndexPage(HttpSession session, Properties properties) {
 
-        String indexPage = null;
         if (StringUtils.isNotBlank(properties.getProperty(SSOAgentConstants.INDEX_PAGE))) {
-            indexPage = properties.getProperty(SSOAgentConstants.INDEX_PAGE);
+            return properties.getProperty(SSOAgentConstants.INDEX_PAGE);
+        } else if (session != null) {
+            return session.getServletContext().getContextPath();
+        } else {
+            return "./";
         }
-        return indexPage;
     }
 }

@@ -44,12 +44,12 @@
             <artifactId>nimbus-jose-jwt</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.orbit.org.apache.oltu.oauth2</groupId>
-            <artifactId>oltu</artifactId>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>oauth2-oidc-sdk</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.oltu.oauth2</groupId>
-            <artifactId>org.apache.oltu.oauth2.client</artifactId>
+            <groupId>org.ops4j.pax.logging</groupId>
+            <artifactId>pax-logging-api</artifactId>
         </dependency>
     </dependencies>
 

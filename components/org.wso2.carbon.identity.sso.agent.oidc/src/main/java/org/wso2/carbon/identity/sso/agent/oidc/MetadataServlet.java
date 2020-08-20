@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.identity.sso.agent.oidc;
 
-import org.json.JSONObject;
+import net.minidev.json.JSONObject;
 import org.wso2.carbon.identity.sso.agent.oidc.bean.TokenData;
 import org.wso2.carbon.identity.sso.agent.oidc.util.CommonUtils;
 

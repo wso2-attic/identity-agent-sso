@@ -224,6 +224,11 @@
                 <version>${nimbusds.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>oauth2-oidc-sdk</artifactId>
+                <version>${nimbusds.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-lang.wso2</groupId>
                 <artifactId>commons-lang</artifactId>
                 <version>${commons-lang.wso2.version}</version>
@@ -360,7 +365,7 @@
         <commons-collections.wso2.osgi.version.range>[3.2.0,4.0.0)</commons-collections.wso2.osgi.version.range>
         <encoder.wso2.version>1.2.0.wso2v1</encoder.wso2.version>
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
-        <nimbusds.version>8.20</nimbusds.version>
+        <nimbusds.version>8.19</nimbusds.version>
     </properties>
 
     <modules>
