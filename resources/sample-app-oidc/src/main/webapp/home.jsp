@@ -21,14 +21,11 @@
 <%@page import="com.nimbusds.jwt.ReadOnlyJWTClaimsSet" %>
 <%@page import="com.nimbusds.jwt.SignedJWT" %>
 <%@page import="org.wso2.carbon.identity.sso.agent.oidc.SSOAgentContextEventListener" %>
+<%@page import="org.wso2.carbon.identity.sso.agent.oidc.bean.SessionBean" %>
 <%@page import="org.wso2.carbon.identity.sso.agent.oidc.util.SSOAgentConstants" %>
 <%@page import="java.util.HashMap" %>
-<%@page import="java.util.Map" %>
+<%@ page import="java.util.Map" %>
 <%@ page import="java.util.Properties" %>
-<%@ page import="java.util.Set" %>
-<%@ page import="java.util.Arrays" %>
-<%@ page import="java.util.HashSet" %>
-<%@ page import="org.wso2.carbon.identity.sso.agent.oidc.bean.SessionBean" %>
 
 <%
     final HttpSession currentSession = request.getSession(false);
@@ -103,7 +100,7 @@
             </div>
             <table class="center">
                 <tbody>
-                <% for (String claim: customClaimValueMap.keySet()) { %>
+                <% for (String claim : customClaimValueMap.keySet()) { %>
                 <tr>
                     <td><%=claim%>
                     </td>
