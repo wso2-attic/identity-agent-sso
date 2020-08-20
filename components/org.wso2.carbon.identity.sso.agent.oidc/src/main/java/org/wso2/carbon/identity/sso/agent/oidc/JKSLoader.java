@@ -31,6 +31,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+/**
+ * Used to find and set JKS required for IS server communication.
+ */
 public class JKSLoader implements ServletContextListener {
 
     @Override

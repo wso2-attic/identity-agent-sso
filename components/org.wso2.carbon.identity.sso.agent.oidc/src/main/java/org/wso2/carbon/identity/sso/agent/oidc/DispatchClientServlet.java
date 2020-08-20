@@ -34,6 +34,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * A servlet class to handle OIDC requests and responses.
+ */
 public class DispatchClientServlet extends HttpServlet {
 
     @Override

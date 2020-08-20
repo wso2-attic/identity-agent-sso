@@ -29,6 +29,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+/**
+ * An event listener class used to load the app.properties file configurations.
+ */
 public class SSOAgentContextEventListener implements ServletContextListener {
 
     private static Properties properties;

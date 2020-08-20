@@ -39,6 +39,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * A Filter class used to check sessions and secure pages.
+ */
 public class OIDCAuthorizationFilter implements Filter {
 
     protected FilterConfig filterConfig = null;

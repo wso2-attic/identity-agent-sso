@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.identity.sso.agent.oidc.util;
 
+/**
+ * This class holds the constants used in the module, sso-agent-oidc.
+ */
 public class SSOAgentConstants {
 
     // Oauth response parameters and session attributes

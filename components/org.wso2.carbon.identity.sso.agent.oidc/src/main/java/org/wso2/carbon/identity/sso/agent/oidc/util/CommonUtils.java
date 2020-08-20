@@ -45,6 +45,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * This class is used to define the utilities required in sso-agent-oidc module.
+ */
 public class CommonUtils {
 
     private static final Map<String, TokenData> TOKEN_STORE = new HashMap<>();

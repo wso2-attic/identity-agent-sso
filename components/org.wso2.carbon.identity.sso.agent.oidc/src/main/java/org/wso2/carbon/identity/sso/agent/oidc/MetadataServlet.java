@@ -31,6 +31,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * A servlet class to handle OIDC metadata.
+ */
 public class MetadataServlet extends HttpServlet {
 
     private static void sendNotFound(final HttpServletResponse response) throws IOException {

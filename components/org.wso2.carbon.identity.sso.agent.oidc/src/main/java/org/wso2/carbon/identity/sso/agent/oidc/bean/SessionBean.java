@@ -29,7 +29,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class is used to handle session attributes in the OIDC SSO agent module.
+ */
 public class SessionBean {
+
+    private static Set<String>
+            oidcMetadataClaims = new HashSet<>(Arrays.asList("at_hash", "c_hash", "azp", "amr", "sid"));
+
 
     public static SessionBean getInstance() {
 
@@ -43,14 +50,12 @@ public class SessionBean {
     public Map<String, Object> getUserAttributes(String idToken) throws SSOAgentServerException {
 
         Map<String, Object> userClaimValueMap = new HashMap<>();
-        Set<String> customOIDCClaims = new HashSet<>(Arrays.asList("at_hash", "c_hash", "azp", "amr", "sid"));
-
         try {
             ReadOnlyJWTClaimsSet claimsSet = SignedJWT.parse(idToken).getJWTClaimsSet();
             Map<String, Object> customClaimValueMap = claimsSet.getCustomClaims();
 
             for (String claim : customClaimValueMap.keySet()) {
-                if (!customOIDCClaims.contains(claim)) {
+                if (!oidcMetadataClaims.contains(claim)) {
                     userClaimValueMap.put(claim, customClaimValueMap.get(claim));
                 }
             }

@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.identity.sso.agent.oidc.bean;
 
+/**
+ * A data model class to define the TokenData element.
+ */
 public class TokenData {
 
     private String accessToken;
