@@ -44,8 +44,7 @@ public class SSOAgentConstants {
     public static final String OIDC_LOGOUT_ENDPOINT = "logoutEndpoint";
     public static final String OIDC_SESSION_IFRAME_ENDPOINT = "sessionIFrameEndpoint";
     public static final String OIDC_TOKEN_ENDPOINT = "tokenEndpoint";
-    public static final String OIDC_CLAIM_MGT_ENDPOINT = "claimManagementEndpoint";
-    public static final String NAME = "name";
+    public static final String POST_LOGOUT_REDIRECTION_URI = "postLogoutRedirectURI";
 
     // request headers
     public static final String REFERER = "referer";
