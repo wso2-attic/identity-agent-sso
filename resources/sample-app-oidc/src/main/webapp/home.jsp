@@ -18,19 +18,15 @@
   ~ under the License.
   --%>
 
-<%@page import="com.nimbusds.jwt.JWTClaimsSet" %>
-<%@page import="com.nimbusds.jwt.SignedJWT" %>
 <%@page import="org.wso2.carbon.identity.sso.agent.oidc.SSOAgentContextEventListener" %>
 <%@page import="org.wso2.carbon.identity.sso.agent.oidc.util.SSOAgentConstants" %>
 <%@page import="java.util.HashMap" %>
 <%@page import="java.util.Map" %>
 <%@ page import="java.util.Properties" %>
-<%@ page import="org.wso2.carbon.identity.sso.agent.oidc.bean.SessionBean" %>
+<%@ page import="org.wso2.carbon.identity.sso.agent.oidc.bean.User" %>
 
 <%
     final HttpSession currentSession = request.getSession(false);
-    final Properties properties = SSOAgentContextEventListener.getProperties();
-    final String sessionState = (String) currentSession.getAttribute(SSOAgentConstants.SESSION_STATE);
     final String idToken = (String) currentSession.getAttribute("idToken");
     
     String name = null;
@@ -38,9 +34,9 @@
     
     if (idToken != null) {
         try {
-            JWTClaimsSet claimsSet = SignedJWT.parse(idToken).getJWTClaimsSet();
-            name = claimsSet.getSubject();
-            customClaimValueMap = SessionBean.getInstance().getUserAttributes(idToken);
+            final User user = (User) currentSession.getAttribute("user");
+            customClaimValueMap = user.getAttributes();
+            name = user.getSubject();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,7 +112,7 @@
         </div>
         
         <div class="element-padding">
-            <a href='<%=properties.getProperty(SSOAgentConstants.OIDC_LOGOUT_ENDPOINT)%>?post_logout_redirect_uri=<%=properties.getProperty("post_logout_redirect_uri")%>&id_token_hint=<%=idToken%>&session_state=<%=sessionState%>'>Logout</a>
+            <a href='logout'>Logout</a>
         </div>
     </div>
 </main>

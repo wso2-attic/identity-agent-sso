@@ -27,12 +27,22 @@
 
     <servlet>
         <servlet-name>OAuth2ClientServlet</servlet-name>
-        <servlet-class>org.wso2.carbon.identity.sso.agent.oidc.DispatchClientServlet</servlet-class>
+        <servlet-class>org.wso2.carbon.identity.sso.agent.oidc.OIDCCallbackResponseHandler</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>OAuth2ClientServlet</servlet-name>
         <url-pattern>/oauth2client</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OAuth2LogoutServlet</servlet-name>
+        <servlet-class>org.wso2.carbon.identity.sso.agent.oidc.LogoutServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OAuth2LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
     </servlet-mapping>
 
     <filter>
