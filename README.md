@@ -1,3 +1,10 @@
+# DEPRECATION NOTICE
+This repository is deprecated and all the work has been moved to the following repositories.
+- https://github.com/asgardio/asgardio-java-saml-sdk.
+- https://github.com/asgardio/asgardio-tomcat-saml-agent.
+- https://github.com/asgardio/asgardio-java-oidc-sdk.
+- https://github.com/asgardio/asgardio-tomcat-oidc-agent.
+
 # WSO2 SAML SDK for Java
 
 The WSO2 SAML SDK for Java enables software developers to integrate SAML based SSO authentication with Java Web
